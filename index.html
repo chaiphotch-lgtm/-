@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-<meta name="google-site-verification" content="pX2ZoVYs7pOWw22v17ub4JFUgFlu5TzU7nFr5o-lHf4" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera House — เช่ากล้องและเลนส์</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -93,6 +92,14 @@ hr.div{border:none;border-top:1px solid var(--border);margin:0}
 .tag-ff{background:rgba(62,207,142,.1);color:var(--green);border:1px solid rgba(62,207,142,.2)}
 .tag-nikon{background:rgba(255,208,96,.1);color:#ffd060;border:1px solid rgba(255,208,96,.2)}
 
+/* CAMERA STATUS BADGE */
+.camera-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);padding:3px 8px;border-radius:4px;margin-top:6px}
+.status-available{background:rgba(62,207,142,.12);color:var(--green);border:1px solid rgba(62,207,142,.25)}
+.status-unavailable{background:rgba(255,99,64,.12);color:var(--accent);border:1px solid rgba(255,99,64,.25)}
+.status-dot{width:5px;height:5px;border-radius:50%;}
+.status-dot-green{background:var(--green)}
+.status-dot-red{background:var(--accent)}
+
 /* LENS NOTE BOX */
 .note-box{background:rgba(255,99,64,.05);border:1px solid rgba(255,99,64,.15);border-radius:10px;padding:1.25rem 1.5rem;margin-top:1.5rem;font-size:13px;color:var(--muted);line-height:1.7}
 .note-box strong{color:var(--text)}
@@ -115,6 +122,17 @@ hr.div{border:none;border-top:1px solid var(--border);margin:0}
 .step-n{font-size:11px;font-weight:500;color:var(--accent);font-family:var(--mono);letter-spacing:.05em}
 .step-t{font-size:16px;font-weight:600}
 .step-d{font-size:13px;color:var(--muted);line-height:1.6}
+.step-contact-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,99,64,.08);border:1px solid rgba(255,99,64,.2);border-radius:6px;padding:6px 10px;margin-top:6px;font-size:12px;color:var(--text);text-decoration:none;transition:background .15s}
+.step-contact-badge:hover{background:rgba(255,99,64,.15)}
+
+/* LOCATION SECTION */
+.location-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.location-map-wrap{width:100%;height:320px;overflow:hidden;position:relative;background:var(--bg3)}
+.location-map-wrap iframe{width:100%;height:100%;border:none;display:block}
+.location-body{padding:2rem}
+.location-address{font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
+.location-detail{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.7;padding:12px;background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.15);border-radius:8px}
+.location-detail strong{color:var(--accent2)}
 
 /* CTA */
 .cta-block{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:4rem 3rem;text-align:center;position:relative;overflow:hidden;margin:2rem 0}
@@ -141,6 +159,66 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
 .tab{padding:6px 18px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s,color .15s;color:var(--muted);border:none;background:transparent;font-family:var(--font)}
 .tab.active{background:var(--bg3);color:var(--text)}
 .tab-content{display:none}.tab-content.active{display:block}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-close{position:absolute;top:1rem;right:1rem;width:28px;height:28px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:20px;transition:color .2s}
+.modal-close:hover{color:var(--text)}
+.modal-title{font-size:1.5rem;font-weight:600;margin-bottom:1.5rem;color:var(--text)}
+.modal-section{margin-bottom:1.5rem}
+.modal-label{font-size:12px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:block;font-family:var(--mono)}
+.modal-input{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:14px;margin-bottom:10px;transition:border-color .2s}
+.modal-input:focus{outline:none;border-color:var(--accent)}
+.modal-select{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s}
+.modal-select:focus{outline:none;border-color:var(--accent)}
+.modal-select option{background:var(--bg2);color:var(--text)}
+
+.lens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.lens-option{padding:12px;background:var(--bg3);border:2px solid transparent;border-radius:8px;cursor:pointer;font-size:12px;text-align:center;transition:all .2s;font-weight:500}
+.lens-option:hover{background:var(--bg);border-color:var(--accent)}
+.lens-option.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lens-free{display:inline-block;font-size:10px;color:var(--green);background:rgba(62,207,142,.15);padding:2px 6px;border-radius:3px;margin-top:4px}
+
+.addon-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.addon-option{padding:12px;background:var(--bg3);border:2px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;text-align:center;transition:all .2s;font-weight:500}
+.addon-option:hover{border-color:var(--accent)}
+.addon-option.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.price-summary{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;font-size:14px}
+.price-row{display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted)}
+.price-row.total{border-top:1px solid var(--border);padding-top:10px;margin-top:10px;color:var(--text);font-weight:600;font-size:15px}
+.price-row.total .price{color:var(--accent);font-size:18px}
+
+/* PAYMENT BOX */
+.payment-box{background:rgba(62,207,142,.05);border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+.payment-box-title{font-size:12px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;font-family:var(--mono);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.payment-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px;color:var(--muted)}
+.payment-row:last-child{margin-bottom:0}
+.payment-val{color:var(--text);font-weight:500;font-family:var(--mono)}
+.payment-acct{font-size:16px;font-weight:700;color:var(--green);font-family:var(--mono);letter-spacing:.05em}
+.payment-note{font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid rgba(62,207,142,.15)}
+
+.btn-submit{width:100%;background:var(--accent);color:#fff;padding:12px;border:none;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;transition:opacity .2s;margin-bottom:8px}
+.btn-submit:hover{opacity:.85}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-cancel{width:100%;background:transparent;color:var(--text);padding:12px;border:1px solid var(--border);border-radius:8px;font-weight:500;cursor:pointer;transition:background .2s}
+.btn-cancel:hover{background:var(--bg3)}
+
+.loading-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.alert{padding:1rem;border-radius:8px;margin-bottom:1rem;font-size:14px;border-left:4px solid}
+.alert-success{background:rgba(62,207,142,.1);border-left-color:var(--green);color:var(--green)}
+.alert-error{background:rgba(255,99,64,.1);border-left-color:var(--accent);color:var(--accent)}
+.alert-warning{background:rgba(255,179,71,.1);border-left-color:var(--accent2);color:var(--accent2)}
+
+/* Availability checking */
+.avail-check{display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border-radius:6px;margin-bottom:10px}
+.avail-ok{background:rgba(62,207,142,.1);color:var(--green);border:1px solid rgba(62,207,142,.2)}
+.avail-busy{background:rgba(255,99,64,.1);color:var(--accent);border:1px solid rgba(255,99,64,.2)}
+.avail-checking{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -153,6 +231,7 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     <li><a href="#lenses">เลนส์</a></li>
     <li><a href="#addons">อุปกรณ์เสริม</a></li>
     <li><a href="#how">วิธีเช่า</a></li>
+    <li><a href="#location">ที่อยู่</a></li>
     <li><a href="#contact" class="nav-cta">ติดต่อเรา</a></li>
   </ul>
 </nav>
@@ -221,9 +300,9 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
   <div class="prod-grid">
 
     <!-- Canon 2000D -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Canon EOS 2000D', 500, 'Crop')">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&q=80" alt="Canon 2000D" loading="lazy">
+        <img src="https://www.ephotozine.com/articles/canon-eos-2000d-review-32181/images/highres-Canon-EOS-2000D-1_1524048235.jpg" alt="Canon 2000D" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON</div>
@@ -233,13 +312,14 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">500<span> ฿/วัน</span></div>
           <span class="prod-tag tag-crop">Crop</span>
         </div>
+        <div id="status-Canon EOS 2000D" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
     <!-- Canon 550D -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Canon EOS 550D', 500, 'Crop')">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1580327344181-c1163234e5a0?w=400&q=80" alt="Canon 550D" loading="lazy">
+        <img src="https://i0.wp.com/digital-photography-school.com/wp-content/uploads/2010/07/Canon-EOS-550D-t2i.jpg?resize=600%2C685&ssl=1" alt="Canon 550D" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON</div>
@@ -249,13 +329,14 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">500<span> ฿/วัน</span></div>
           <span class="prod-tag tag-crop">Crop</span>
         </div>
+        <div id="status-Canon EOS 550D" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
     <!-- Canon 600D -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Canon EOS 600D', 500, 'Crop')">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80" alt="Canon 600D" loading="lazy">
+        <img src="https://m.media-amazon.com/images/I/81VEw0z9k4L.jpg" alt="Canon 600D" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON</div>
@@ -265,13 +346,14 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">500<span> ฿/วัน</span></div>
           <span class="prod-tag tag-crop">Crop</span>
         </div>
+        <div id="status-Canon EOS 600D" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
     <!-- Canon 5D Mark II -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Canon EOS 5D Mark II', 1000, 'Full Frame')">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1606986628253-fa0dd455af22?w=400&q=80" alt="Canon 5D Mark II" loading="lazy">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Canon_EOS_5D_Mark_II_with_50mm_1.4_edit1.jpg" alt="Canon 5D Mark II" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON</div>
@@ -281,13 +363,14 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">1,000<span> ฿/วัน</span></div>
           <span class="prod-tag tag-ff">Full Frame</span>
         </div>
+        <div id="status-Canon EOS 5D Mark II" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
     <!-- Canon 6D Mark II -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Canon EOS 6D Mark II', 1000, 'Full Frame')">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80" alt="Canon 6D Mark II" loading="lazy">
+        <img src="https://fotofile.co.th/wp-content/uploads/2023/07/Canon-EOS-6D-Mark-II-Kit-EF24-105mm-f4L-IS-II-USM-1.jpg" alt="Canon 6D Mark II" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON</div>
@@ -297,11 +380,12 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">1,000<span> ฿/วัน</span></div>
           <span class="prod-tag tag-ff">Full Frame</span>
         </div>
+        <div id="status-Canon EOS 6D Mark II" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
     <!-- Nikon D5300 -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openBookingModal('Nikon D5300', 500, 'Crop')">
       <div class="prod-img-wrap">
         <img src="https://images.unsplash.com/photo-1621520291095-aa6c7137b7a4?w=400&q=80" alt="Nikon D5300" loading="lazy">
       </div>
@@ -313,6 +397,7 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
           <div class="prod-price">500<span> ฿/วัน</span></div>
           <span class="prod-tag tag-nikon">Crop</span>
         </div>
+        <div id="status-Nikon D5300" class="camera-status status-available"><span class="status-dot status-dot-green"></span>กำลังตรวจสอบ...</div>
       </div>
     </div>
 
@@ -325,101 +410,117 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
 <section id="lenses">
   <p class="slabel">เลนส์</p>
   <h2>เลนส์คุณภาพหลากหลาย</h2>
-  <p class="ssub">เช่ากล้องรวมเลนส์ 1 ตัวฟรี เลือกได้ตามต้องการ</p>
+  <p class="ssub">เช่ากล้องรวมเลนส์ 1 ตัวฟรี เลือกได้ตามต้องการ หรือจองเลนส์เพิ่มแยกได้เลย</p>
 
   <div class="prod-grid">
 
     <!-- Canon 24-105 -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 24-105mm F4L', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1617005082133-548c4dd27f35?w=400&q=80" alt="Canon 24-105" loading="lazy">
+        <img src="https://www.ec-mall.com/media/catalog/product/cache/55b8d9149c90ec27221b7d1ab8c3d7ed/c/_/c_a_canon-ef-24-105mm-f4l-is-ii-usm_1.jpg" alt="Canon 24-105" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON EF</div>
         <div class="prod-name">Canon EF 24-105mm F4L</div>
         <div class="prod-spec">Zoom อเนกประสงค์ L-Series · IS · เหมาะ Full Frame · ความคมสูง</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-ff">L-Series</span>
         </div>
       </div>
     </div>
 
     <!-- Canon 18-55 -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 18-55mm F3.5-5.6', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1625938145744-533f9c66b6e0?w=400&q=80" alt="Canon 18-55" loading="lazy">
+        <img src="https://www.wexphotovideo.com/globalassets/product-images/1523000/1523945.jpg?ver=636016974730700000&width=400" alt="Canon 18-55" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON EF</div>
         <div class="prod-name">Canon EF 18-55mm F3.5-5.6</div>
         <div class="prod-spec">Kit Lens · น้ำหนักเบา · เหมาะกล้อง Crop · ใช้งานทั่วไป</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-crop">Kit</span>
         </div>
       </div>
     </div>
 
     <!-- Canon 50mm -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 50mm F1.8', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?w=400&q=80" alt="Canon 50mm" loading="lazy">
+        <img src="https://www.ec-mall.com/media/catalog/product/c/_/c_a_canon-ef-50mm-f1.8-stm_2.jpg" alt="Canon 50mm" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON EF</div>
         <div class="prod-name">Canon EF 50mm F1.8</div>
         <div class="prod-spec">Prime · รูรับแสงกว้าง · โบเก้สวย · ถ่ายพอร์ตเทรต · Indoor</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-ff">Prime</span>
         </div>
       </div>
     </div>
 
     <!-- Canon 85mm -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 85mm F1.8', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1618091351607-8e1f7a39a9a2?w=400&q=80" alt="Canon 85mm" loading="lazy">
+        <img src="https://cw.lnwfile.com/_/cw/_raw/ob/sh/63.jpg" alt="Canon 85mm" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON EF</div>
         <div class="prod-name">Canon EF 85mm F1.8</div>
         <div class="prod-spec">Portrait Prime · โบเก้ครีมมี่ · ระยะพอร์ตเทรตอุดมคติ</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-ff">Portrait</span>
         </div>
       </div>
     </div>
 
     <!-- Canon 18-135 -->
-    <div class="prod-card">
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 18-135mm F3.5-5.6', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1561581681-3f02aff96e4a?w=400&q=80" alt="Canon 18-135" loading="lazy">
+        <img src="https://www.ec-mall.com/media/catalog/product/wp-content/uploads/2016/05/Canon-EF-S-18-135mm-f3.5-5.6-IS-USM_1-1.jpg" alt="Canon 18-135" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-canon">CANON EF</div>
         <div class="prod-name">Canon EF 18-135mm F3.5-5.6</div>
         <div class="prod-spec">All-in-One Zoom · ท่องเที่ยว · ครอบคลุมทุกระยะ · IS</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-crop">Travel</span>
         </div>
       </div>
     </div>
 
-    <!-- Nikon 18-135 -->
-    <div class="prod-card">
+    <!-- Canon 28-135 -->
+    <div class="prod-card" onclick="openLensBookingModal('Canon EF 28-135mm F3.5-5.6', 300)">
       <div class="prod-img-wrap">
-        <img src="https://images.unsplash.com/photo-1562813733-b31f71025d54?w=400&q=80" alt="Nikon 18-135" loading="lazy">
+        <img src="https://www.ec-mall.com/media/catalog/product/wp-content/uploads/2016/05/Canon-EF-S-18-135mm-f3.5-5.6-IS-USM_1-1.jpg" alt="Canon 28-135" loading="lazy">
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand brand-canon">CANON EF</div>
+        <div class="prod-name">Canon EF 28-135mm F3.5-5.6</div>
+        <div class="prod-spec">Zoom อเนกประสงค์ · เหมาะ Full Frame · ครบทุกระยะ · IS</div>
+        <div class="prod-footer">
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
+          <span class="prod-tag tag-ff">Zoom</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nikon 18-135 -->
+    <div class="prod-card" onclick="openLensBookingModal('Nikon AF-S 18-135mm F3.5-5.6', 300)">
+      <div class="prod-img-wrap">
+        <img src="https://cipher.dakiscdn.com/i/https://1410dd2bdd37e05ebf19-a2305060cc55ab8db83b1ef4b8835a6b.ssl.cf5.rackcdn.com/cd10d840-e183-0130-87c0-20cf30bab63e?w=400&h=400&p=1&a=1&q=display" alt="Nikon 18-135" loading="lazy">
       </div>
       <div class="prod-body">
         <div class="prod-brand brand-nikon">NIKON AF-S</div>
         <div class="prod-name">Nikon AF-S 18-135mm F3.5-5.6</div>
         <div class="prod-spec">All-in-One สำหรับ Nikon · เหมาะ D5300 · ท่องเที่ยว · งาน Event</div>
         <div class="prod-footer">
-          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ</div>
+          <div class="prod-price" style="color:var(--green);font-size:13px;">รวมในแพ็กเกจ / +300฿ เพิ่มเติม</div>
           <span class="prod-tag tag-nikon">Nikon</span>
         </div>
       </div>
@@ -443,9 +544,9 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
   <div class="addon-grid">
 
     <!-- Godox TT600 -->
-    <div class="addon-card">
+    <div class="addon-card" onclick="openAddonBookingModal('Godox TT600', 300)" style="cursor:pointer;">
       <div class="addon-img-wrap">
-        <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=80" alt="Godox TT600" loading="lazy">
+        <img src="https://img.myipadbox.com/upload/store/detail_l/EDA001143601A_1.jpg" alt="Godox TT600" loading="lazy">
       </div>
       <div class="addon-body">
         <div class="addon-cat" style="color:#ffb347;">GODOX — แฟลช</div>
@@ -459,9 +560,9 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     </div>
 
     <!-- Godox TT685 II -->
-    <div class="addon-card">
+    <div class="addon-card" onclick="openAddonBookingModal('Godox TT685 II', 300)" style="cursor:pointer;">
       <div class="addon-img-wrap">
-        <img src="https://images.unsplash.com/photo-1520390138845-fd2d229dd553?w=400&q=80" alt="Godox TT685 II" loading="lazy">
+        <img src="https://f.ptcdn.info/851/041/000/o5qkisdciFFiFtgXLYk-o.jpg" alt="Godox TT685 II" loading="lazy">
       </div>
       <div class="addon-body">
         <div class="addon-cat" style="color:#ffb347;">GODOX — แฟลช</div>
@@ -475,9 +576,9 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     </div>
 
     <!-- BKL-300Bi LED Kit -->
-    <div class="addon-card">
+    <div class="addon-card" onclick="openAddonBookingModal('BKL-300Bi LED Kit', 400)" style="cursor:pointer;">
       <div class="addon-img-wrap">
-        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=80" alt="LED BKL-300Bi" loading="lazy">
+        <img src="https://dh.lnwfile.com/_/dh/_raw/mi/lm/xf.jpg" alt="LED BKL-300Bi" loading="lazy">
       </div>
       <div class="addon-body">
         <div class="addon-cat" style="color:var(--green);">ไฟ LED — ชุดสตูดิโอ</div>
@@ -495,7 +596,7 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
 
 <hr class="div">
 
-<!-- HOW -->
+<!-- HOW — งานที่ 5 -->
 <section id="how">
   <p class="slabel">วิธีเช่า</p>
   <h2>ง่าย 3 ขั้นตอน</h2>
@@ -509,13 +610,61 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     </div>
     <div class="step">
       <span class="step-n">02 —</span>
-      <div class="step-t">ติดต่อจอง</div>
-      <div class="step-d">ติดต่อผ่าน Line หรือโทรศัพท์เพื่อยืนยันการจองและวางมัดจำ รอรับการยืนยันจากเจ้าหน้าที่</div>
+      <div class="step-t">จองผ่านช่องทางที่สะดวก</div>
+      <div class="step-d" style="display:flex;flex-direction:column;gap:8px;">
+        <span>เลือกวิธีจองได้ 2 ช่องทาง:</span>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="#cameras" class="step-contact-badge">
+            🖥️ <strong>จองผ่านระบบออนไลน์</strong> — กดปุ่ม "จอง" ที่หน้าสินค้าและกรอกข้อมูล
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=Camera-House" target="_blank" class="step-contact-badge">
+            📘 <strong>Facebook:</strong> Camera House - เช่ากล้องสุรินทร์
+          </a>
+          <a href="tel:+66948793692" class="step-contact-badge">
+            📞 <strong>โทร:</strong> +66 94 879 3692
+          </a>
+        </div>
+      </div>
     </div>
     <div class="step">
       <span class="step-n">03 —</span>
       <div class="step-t">รับและคืนอุปกรณ์</div>
       <div class="step-d">นำบัตรประชาชนมารับอุปกรณ์ตามวันนัด ตรวจสอบสภาพก่อนรับ และคืนในสภาพเดิมตามกำหนด</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- LOCATION — งานที่ 6 -->
+<section id="location">
+  <p class="slabel">ที่อยู่</p>
+  <h2>สถานที่รับกล้อง</h2>
+  <p class="ssub">นัดรับและคืนอุปกรณ์ได้ที่ร้านของเราในสุรินทร์</p>
+
+  <div class="location-card">
+    <div class="location-map-wrap">
+      <iframe
+        src="https://maps.google.com/maps?q=14.8804,103.4928&z=17&output=embed"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Camera House Location">
+      </iframe>
+    </div>
+    <div class="location-body">
+      <div class="location-address">📍 59/4 สระโบราณ 1, Surin, Thailand 32000</div>
+      <div class="location-detail">
+        <strong>สังเกตได้จาก:</strong> ร้านอยู่ติดกับตึกสำนักงาน AIA ทางซ้ายมือ มีป้ายร้านข้าวสุขติดอยู่หน้าร้าน
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="https://maps.app.goo.gl/kHTTv8X7MphrXGEZ7" target="_blank" class="btn-p" style="font-size:14px;padding:10px 20px;">
+          🗺️ เปิด Google Maps
+        </a>
+        <a href="tel:+66948793692" class="btn-g" style="font-size:14px;padding:10px 20px;">
+          📞 +66 94 879 3692
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -529,8 +678,8 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     <h2>พร้อมถ่ายรูปแล้วหรือยัง?</h2>
     <p>ติดต่อสอบถามและจองอุปกรณ์ได้เลยวันนี้</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="tel:" class="btn-p">📞 โทรจอง</a>
-      <a href="#" class="btn-g">💬 Line ติดต่อ</a>
+      <a href="tel:+66948793692" class="btn-p">📞 +66 94 879 3692</a>
+      <a href="https://www.facebook.com/search/top?q=Camera+House+%E0%B9%80%E0%B8%8A%E0%B9%88%E0%B8%B2%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%AA%E0%B8%B8%E0%B8%A3%E0%B8%B4%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B9%8C" target="_blank" class="btn-g">📘 Facebook Page</a>
     </div>
     <div style="margin-top:2rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
       <div style="text-align:center">
@@ -551,6 +700,151 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
   </div>
 </section>
 
+<!-- ===== BOOKING MODAL (กล้อง) ===== -->
+<div id="bookingModal" class="modal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeBookingModal()">✕</button>
+    
+    <div class="modal-title">จองอุปกรณ์</div>
+    <div id="alertBox"></div>
+
+    <!-- Camera Info -->
+    <div class="modal-section">
+      <span class="modal-label">กล้องที่เลือก</span>
+      <div style="padding:12px;background:var(--bg3);border-radius:8px;color:var(--text);font-weight:500;" id="selectedCameraDisplay"></div>
+    </div>
+
+    <!-- Lens Selection -->
+    <div class="modal-section">
+      <span class="modal-label">เลนส์ฟรี 1 ตัว</span>
+      <div class="lens-grid" id="lensGrid"></div>
+    </div>
+
+    <!-- Additional Lenses -->
+    <div class="modal-section">
+      <span class="modal-label">เพิ่มเลนส์เพิ่มเติม (ตัวละ 300 บาท)</span>
+      <div style="max-height:120px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:10px;" id="additionalLensGrid"></div>
+    </div>
+
+    <!-- Addons -->
+    <div class="modal-section">
+      <span class="modal-label">อุปกรณ์เสริม (เลือกได้)</span>
+      <div class="addon-select-grid" id="addonGrid"></div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="modal-section">
+      <span class="modal-label">ชื่อผู้เช่า</span>
+      <input type="text" id="name" class="modal-input" placeholder="เช่น สมชาย ใจดี">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">เบอร์โทรศัพท์</span>
+      <input type="tel" id="phone" class="modal-input" placeholder="เช่น 0812345678">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">วันและเวลารับอุปกรณ์</span>
+      <input type="datetime-local" id="pickup" class="modal-input" onchange="onDateChange()">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">จำนวนวันที่เช่า</span>
+      <input type="number" id="days" class="modal-input" placeholder="จำนวนวัน" min="1" value="1" onchange="onDateChange()">
+    </div>
+
+    <!-- Availability status -->
+    <div id="availabilityStatus"></div>
+
+    <!-- Price Summary -->
+    <div class="price-summary">
+      <div class="price-row">
+        <span id="priceLabel">กล้อง + เลนส์</span>
+        <span id="basePrice">0 ฿</span>
+      </div>
+      <div class="price-row">
+        <span id="addlensLabel" style="display:none;">เลนส์เพิ่มเติม</span>
+        <span id="addlensPrice" style="display:none;">0</span>
+      </div>
+      <div class="price-row">
+        <span id="addonLabel" style="display:none;">อุปกรณ์เสริม</span>
+        <span id="addonPrice" style="display:none;">0</span>
+      </div>
+      <div class="price-row total">
+        <span>รวมทั้งสิ้น</span>
+        <span class="price" id="totalPrice">0 ฿</span>
+      </div>
+    </div>
+
+    <!-- Payment info (แสดงหลังจองสำเร็จ) -->
+    <div id="paymentBox" style="display:none;" class="payment-box">
+      <div class="payment-box-title">💳 ชำระเงิน</div>
+      <div class="payment-row"><span>ชื่อบัญชี</span><span class="payment-val">ไชยพศ ไชยปัญหา</span></div>
+      <div class="payment-row"><span>ธนาคาร</span><span class="payment-val">กรุงไทย</span></div>
+      <div class="payment-row"><span>เลขบัญชี</span><span class="payment-acct">861-0-58959-5</span></div>
+      <div class="payment-note">⚠️ กรุณาโอนและส่งหลักฐานการโอนมาที่ Facebook หรือโทร +66 94 879 3692 เพื่อยืนยันการจอง</div>
+    </div>
+
+    <!-- Buttons -->
+    <button id="submitBtn" class="btn-submit" onclick="submitBooking()">ยืนยันการจอง</button>
+    <button class="btn-cancel" onclick="closeBookingModal()">ยกเลิก</button>
+  </div>
+</div>
+
+<!-- ===== SIMPLE BOOKING MODAL (เลนส์/อุปกรณ์เสริม) ===== -->
+<div id="simpleBookingModal" class="modal">
+  <div class="modal-content" style="position:relative;">
+    <button class="modal-close" onclick="closeSimpleModal()">✕</button>
+    
+    <div class="modal-title">จองอุปกรณ์</div>
+    <div id="simpleAlertBox"></div>
+
+    <div class="modal-section">
+      <span class="modal-label">อุปกรณ์ที่เลือก</span>
+      <div style="padding:12px;background:var(--bg3);border-radius:8px;color:var(--text);font-weight:500;" id="simpleItemDisplay"></div>
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">ชื่อผู้เช่า</span>
+      <input type="text" id="simpleName" class="modal-input" placeholder="เช่น สมชาย ใจดี">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">เบอร์โทรศัพท์</span>
+      <input type="tel" id="simplePhone" class="modal-input" placeholder="เช่น 0812345678">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">วันและเวลารับอุปกรณ์</span>
+      <input type="datetime-local" id="simplePickup" class="modal-input" onchange="updateSimplePrice()">
+    </div>
+
+    <div class="modal-section">
+      <span class="modal-label">จำนวนวันที่เช่า</span>
+      <input type="number" id="simpleDays" class="modal-input" placeholder="จำนวนวัน" min="1" value="1" onchange="updateSimplePrice()">
+    </div>
+
+    <div class="price-summary">
+      <div class="price-row total">
+        <span>รวมทั้งสิ้น</span>
+        <span class="price" id="simpleTotalPrice">0 ฿</span>
+      </div>
+    </div>
+
+    <!-- Payment info -->
+    <div id="simplePaymentBox" style="display:none;" class="payment-box">
+      <div class="payment-box-title">💳 ชำระเงิน</div>
+      <div class="payment-row"><span>ชื่อบัญชี</span><span class="payment-val">ไชยพศ ไชยปัญหา</span></div>
+      <div class="payment-row"><span>ธนาคาร</span><span class="payment-val">กรุงไทย</span></div>
+      <div class="payment-row"><span>เลขบัญชี</span><span class="payment-acct">861-0-58959-5</span></div>
+      <div class="payment-note">⚠️ กรุณาโอนและส่งหลักฐานการโอนมาที่ Facebook หรือโทร +66 94 879 3692 เพื่อยืนยันการจอง</div>
+    </div>
+
+    <button id="simpleSubmitBtn" class="btn-submit" onclick="submitSimpleBooking()">ยืนยันการจอง</button>
+    <button class="btn-cancel" onclick="closeSimpleModal()">ยกเลิก</button>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <hr class="div">
 <footer>
@@ -563,9 +857,473 @@ footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:
     <li><a href="#lenses">เลนส์</a></li>
     <li><a href="#addons">อุปกรณ์เสริม</a></li>
     <li><a href="#how">วิธีเช่า</a></li>
+    <li><a href="#location">ที่อยู่</a></li>
   </ul>
-  <span class="footer-copy">© 2025 Camera House</span>
+  <span class="footer-copy">© 2025 Camera House — เช่ากล้องสุรินทร์</span>
 </footer>
+
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = 'https://flpkazqnvthofnrheyxz.supabase.co/rest/v1/';
+const SUPABASE_KEY = 'sb_publishable_tn3y18oXyDoESae1Ki3Czw_GyL3j4JH';
+
+// Init EmailJS
+(function(){
+  emailjs.init("2VCrBo2Ob6PEfRo1O");
+})();
+
+// ===== งานที่ 2: เลนส์ตามรุ่นกล้อง =====
+const cameraLensMap = {
+  'Canon EOS 2000D': ['Canon EF 24-105mm F4L','Canon EF 18-55mm F3.5-5.6','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 18-135mm F3.5-5.6','Canon EF 28-135mm F3.5-5.6'],
+  'Canon EOS 550D':  ['Canon EF 24-105mm F4L','Canon EF 18-55mm F3.5-5.6','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 18-135mm F3.5-5.6','Canon EF 28-135mm F3.5-5.6'],
+  'Canon EOS 600D':  ['Canon EF 24-105mm F4L','Canon EF 18-55mm F3.5-5.6','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 18-135mm F3.5-5.6','Canon EF 28-135mm F3.5-5.6'],
+  'Canon EOS 5D Mark II': ['Canon EF 24-105mm F4L','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 28-135mm F3.5-5.6'],
+  'Canon EOS 6D Mark II': ['Canon EF 24-105mm F4L','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 28-135mm F3.5-5.6'],
+  'Nikon D5300': ['Nikon AF-S 18-135mm F3.5-5.6']
+};
+
+const addons = [
+  { name: 'Godox TT600', price: 300 },
+  { name: 'Godox TT685 II', price: 300 },
+  { name: 'BKL-300Bi LED Kit', price: 400 }
+];
+
+let bookingData = {
+  camera: '',
+  cameraPrice: 0,
+  selectedLens: null,
+  additionalLenses: [],
+  addons: {},
+  days: 1
+};
+
+let simpleBookingData = {
+  itemName: '',
+  itemPrice: 0
+};
+
+// ===== งานที่ 8: เช็กสถานะกล้องวันนี้ =====
+const allCameras = ['Canon EOS 2000D','Canon EOS 550D','Canon EOS 600D','Canon EOS 5D Mark II','Canon EOS 6D Mark II','Nikon D5300'];
+
+async function checkAllCameraStatus() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  for (const cam of allCameras) {
+    const statusEl = document.getElementById('status-' + cam);
+    if (!statusEl) continue;
+    try {
+      const res = await fetch(`${SUPABASE_URL}bookings?select=pickup_datetime,rental_days&camera=eq.${encodeURIComponent(cam)}`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      if (!res.ok) { setStatusUnknown(statusEl); continue; }
+      const data = await res.json();
+      const isUnavailable = data.some(b => {
+        if (!b.pickup_datetime || !b.rental_days) return false;
+        const s = new Date(b.pickup_datetime);
+        const e = new Date(b.pickup_datetime);
+        e.setDate(e.getDate() + b.rental_days);
+        return today < e && tomorrow > s;
+      });
+      if (isUnavailable) {
+        statusEl.className = 'camera-status status-unavailable';
+        statusEl.innerHTML = '<span class="status-dot status-dot-red"></span>ไม่ว่าง';
+      } else {
+        statusEl.className = 'camera-status status-available';
+        statusEl.innerHTML = '<span class="status-dot status-dot-green"></span>พร้อมเช่า';
+      }
+    } catch(e) {
+      setStatusUnknown(statusEl);
+    }
+  }
+}
+
+function setStatusUnknown(el) {
+  el.className = 'camera-status status-available';
+  el.innerHTML = '<span class="status-dot status-dot-green"></span>ติดต่อสอบถาม';
+}
+
+// ===== CAMERA BOOKING MODAL =====
+function openBookingModal(cameraName, price, type) {
+  bookingData = { camera: cameraName, cameraPrice: price, selectedLens: null, additionalLenses: [], addons: {}, days: 1 };
+
+  document.getElementById('selectedCameraDisplay').textContent = `${cameraName} (${price}฿/วัน)`;
+  document.getElementById('bookingModal').classList.add('active');
+  document.getElementById('alertBox').innerHTML = '';
+  document.getElementById('paymentBox').style.display = 'none';
+  document.getElementById('submitBtn').style.display = 'block';
+  document.getElementById('availabilityStatus').innerHTML = '';
+  document.getElementById('days').value = 1;
+  document.getElementById('pickup').value = '';
+
+  renderLensGrid(cameraName);
+  renderAddonGrid();
+  updatePrice();
+}
+
+function closeBookingModal() {
+  document.getElementById('bookingModal').classList.remove('active');
+  document.getElementById('alertBox').innerHTML = '';
+}
+
+function renderLensGrid(cameraName) {
+  const lensNames = cameraLensMap[cameraName] || [];
+  const grid = document.getElementById('lensGrid');
+  grid.innerHTML = lensNames.map((name, idx) => `
+    <div class="lens-option" onclick="selectFreeLens(${idx}, '${name}', event)">
+      <div style="font-size:11px;line-height:1.3;">${name}</div>
+      <div class="lens-free">ฟรี</div>
+    </div>
+  `).join('');
+
+  // additional lenses = all lenses except free camera lenses
+  const allLenses = ['Canon EF 24-105mm F4L','Canon EF 18-55mm F3.5-5.6','Canon EF 50mm F1.8','Canon EF 85mm F1.8','Canon EF 18-135mm F3.5-5.6','Canon EF 28-135mm F3.5-5.6','Nikon AF-S 18-135mm F3.5-5.6'];
+  const grid2 = document.getElementById('additionalLensGrid');
+  grid2.innerHTML = allLenses.map((name, idx) => `
+    <label style="display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer;">
+      <input type="checkbox" onchange="toggleAdditionalLens(${idx}, '${name}')" style="cursor:pointer;">
+      <span style="font-size:12px;">${name} <span style="color:var(--muted);">+300฿/วัน</span></span>
+    </label>
+  `).join('');
+}
+
+function renderAddonGrid() {
+  const addonGrid = document.getElementById('addonGrid');
+  addonGrid.innerHTML = addons.map(addon => `
+    <div style="padding:10px;background:var(--bg3);border-radius:8px;">
+      <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" onchange="toggleAddon('${addon.name}', ${addon.price})" style="cursor:pointer;">
+        <span style="font-size:12px;font-weight:500;">${addon.name}</span>
+        <span style="font-size:11px;color:var(--muted);">${addon.price}฿/วัน</span>
+      </label>
+    </div>
+  `).join('');
+}
+
+function selectFreeLens(idx, name, evt) {
+  bookingData.selectedLens = { name, price: 0 };
+  document.querySelectorAll('#lensGrid .lens-option').forEach(el => el.classList.remove('selected'));
+  evt.currentTarget.classList.add('selected');
+  updatePrice();
+}
+
+function toggleAdditionalLens(idx, name) {
+  const isChecked = event.currentTarget.checked;
+  if (isChecked) {
+    bookingData.additionalLenses.push({ name, price: 300 });
+  } else {
+    bookingData.additionalLenses = bookingData.additionalLenses.filter(l => l.name !== name);
+  }
+  updatePrice();
+}
+
+function toggleAddon(name, price) {
+  const isChecked = event.currentTarget.checked;
+  if (isChecked) { bookingData.addons[name] = price; }
+  else { delete bookingData.addons[name]; }
+  updatePrice();
+}
+
+function updatePrice() {
+  const days = parseInt(document.getElementById('days').value) || 1;
+  bookingData.days = days;
+  const basePrice = bookingData.cameraPrice * days;
+  const addlensPrice = bookingData.additionalLenses.reduce((s,l) => s + l.price * days, 0);
+  const addonPrice = Object.values(bookingData.addons).reduce((s,p) => s + p * days, 0);
+  const total = basePrice + addlensPrice + addonPrice;
+
+  document.getElementById('basePrice').textContent = basePrice + ' ฿';
+  if (addlensPrice > 0) {
+    document.getElementById('addlensLabel').style.display = 'block';
+    document.getElementById('addlensPrice').style.display = 'block';
+    document.getElementById('addlensPrice').textContent = addlensPrice + ' ฿';
+  } else {
+    document.getElementById('addlensLabel').style.display = 'none';
+    document.getElementById('addlensPrice').style.display = 'none';
+  }
+  if (addonPrice > 0) {
+    document.getElementById('addonLabel').style.display = 'block';
+    document.getElementById('addonPrice').style.display = 'block';
+    document.getElementById('addonPrice').textContent = addonPrice + ' ฿';
+  } else {
+    document.getElementById('addonLabel').style.display = 'none';
+    document.getElementById('addonPrice').style.display = 'none';
+  }
+  document.getElementById('totalPrice').textContent = total + ' ฿';
+}
+
+// ===== งานที่ 8: เช็กความว่างก่อนจอง =====
+async function onDateChange() {
+  updatePrice();
+  const pickup = document.getElementById('pickup').value;
+  const days = parseInt(document.getElementById('days').value) || 1;
+  if (!pickup || !bookingData.camera) return;
+
+  const pickupDate = new Date(pickup);
+  const returnDate = new Date(pickupDate);
+  returnDate.setDate(returnDate.getDate() + days);
+
+  const statusEl = document.getElementById('availabilityStatus');
+  statusEl.innerHTML = '<div class="avail-check avail-checking">⏳ กำลังตรวจสอบความว่าง...</div>';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}bookings?select=pickup_datetime,rental_days&camera=eq.${encodeURIComponent(bookingData.camera)}`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!res.ok) { statusEl.innerHTML = ''; return; }
+    const data = await res.json();
+    const unavailable = data.some(b => {
+      if (!b.pickup_datetime || !b.rental_days) return false;
+      const s = new Date(b.pickup_datetime);
+      const e = new Date(b.pickup_datetime);
+      e.setDate(e.getDate() + b.rental_days);
+      return pickupDate < e && returnDate > s;
+    });
+    if (unavailable) {
+      statusEl.innerHTML = '<div class="avail-check avail-busy">❌ กล้องรุ่นนี้ไม่ว่างในช่วงวันที่เลือก กรุณาเลือกวันอื่น</div>';
+    } else {
+      statusEl.innerHTML = '<div class="avail-check avail-ok">✓ กล้องว่าง สามารถจองได้</div>';
+    }
+  } catch(e) {
+    statusEl.innerHTML = '';
+  }
+}
+
+async function submitBooking() {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const days = parseInt(document.getElementById('days').value);
+  const pickup = document.getElementById('pickup').value;
+  const alertBox = document.getElementById('alertBox');
+
+  if (!name || !phone || !days || !pickup || !bookingData.selectedLens) {
+    alertBox.innerHTML = '<div class="alert alert-error">❌ กรุณากรอกข้อมูลให้ครบถ้วนและเลือกเลนส์</div>';
+    return;
+  }
+  if (phone.length < 9) {
+    alertBox.innerHTML = '<div class="alert alert-error">❌ เบอร์โทรศัพท์ไม่ถูกต้อง</div>';
+    return;
+  }
+
+  // ===== งานที่ 8: เช็กซ้ำก่อนบันทึก =====
+  const pickupDate = new Date(pickup);
+  const returnDate = new Date(pickupDate);
+  returnDate.setDate(returnDate.getDate() + days);
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="loading-spinner"></span>กำลังตรวจสอบ...';
+
+  try {
+    const checkRes = await fetch(`${SUPABASE_URL}bookings?select=pickup_datetime,rental_days&camera=eq.${encodeURIComponent(bookingData.camera)}`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    if (checkRes.ok) {
+      const existing = await checkRes.json();
+      const conflict = existing.some(b => {
+        if (!b.pickup_datetime || !b.rental_days) return false;
+        const s = new Date(b.pickup_datetime);
+        const e = new Date(b.pickup_datetime);
+        e.setDate(e.getDate() + b.rental_days);
+        return pickupDate < e && returnDate > s;
+      });
+      if (conflict) {
+        alertBox.innerHTML = '<div class="alert alert-error">❌ กล้องรุ่นนี้ไม่ว่างในวันที่เลือก กรุณาเลือกวันอื่น</div>';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'ยืนยันการจอง';
+        return;
+      }
+    }
+  } catch(e) { /* ถ้าเช็กไม่ได้ให้ดำเนินการต่อ */ }
+
+  submitBtn.innerHTML = '<span class="loading-spinner"></span>กำลังส่ง...';
+
+  const totalText = document.getElementById('totalPrice').textContent;
+  const totalPrice = parseInt(totalText) || 0;
+
+  const bookingRecord = {
+    name,
+    phone,
+    camera: bookingData.camera,
+    main_lens: bookingData.selectedLens.name,
+    additional_lenses: bookingData.additionalLenses.map(l => l.name).join(', ') || null,
+    addons: Object.keys(bookingData.addons).join(', ') || null,
+    rental_days: days,
+    pickup_datetime: pickup,
+    total_price: totalPrice,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(bookingRecord)
+    });
+
+    if (response.ok || response.status === 201) {
+      // ===== งานที่ 7: ส่ง EmailJS =====
+      try {
+        await emailjs.send("service_oy28m8o", "template_1kfkj06", {
+          name,
+          phone,
+          camera: bookingData.camera,
+          main_lens: bookingData.selectedLens.name,
+          additional_lenses: bookingData.additionalLenses.map(l=>l.name).join(', ') || '-',
+          addons: Object.keys(bookingData.addons).join(', ') || '-',
+          days,
+          pickup,
+          total_price: totalText
+        });
+      } catch(emailErr) {
+        console.warn('EmailJS error:', emailErr);
+      }
+
+      alertBox.innerHTML = '<div class="alert alert-success">✓ จองสำเร็จ! กรุณาชำระเงินตามข้อมูลด้านล่าง</div>';
+      // ===== งานที่ 1: แสดงข้อมูลชำระเงิน =====
+      document.getElementById('paymentBox').style.display = 'block';
+      document.getElementById('submitBtn').style.display = 'none';
+
+      // อัปเดตสถานะกล้องในหน้า
+      const statusEl = document.getElementById('status-' + bookingData.camera);
+      if (statusEl) {
+        statusEl.className = 'camera-status status-unavailable';
+        statusEl.innerHTML = '<span class="status-dot status-dot-red"></span>ไม่ว่าง';
+      }
+    } else {
+      const err = await response.json().catch(() => ({}));
+      alertBox.innerHTML = `<div class="alert alert-error">❌ เกิดข้อผิดพลาด: ${err.message || response.status}</div>`;
+    }
+  } catch (error) {
+    alertBox.innerHTML = `<div class="alert alert-error">❌ ไม่สามารถเชื่อมต่อได้: ${error.message}</div>`;
+  } finally {
+    submitBtn.disabled = false;
+    if (submitBtn.style.display !== 'none') submitBtn.innerHTML = 'ยืนยันการจอง';
+  }
+}
+
+// ===== งานที่ 3 & 4: Modal เลนส์/อุปกรณ์เสริม =====
+function openLensBookingModal(lensName, pricePerDay) {
+  simpleBookingData = { itemName: lensName, itemPrice: pricePerDay };
+  document.getElementById('simpleItemDisplay').textContent = `${lensName} (+${pricePerDay}฿/วัน เมื่อเช่าพร้อมกล้อง)`;
+  document.getElementById('simpleAlertBox').innerHTML = '';
+  document.getElementById('simplePaymentBox').style.display = 'none';
+  document.getElementById('simpleSubmitBtn').style.display = 'block';
+  document.getElementById('simpleDays').value = 1;
+  document.getElementById('simplePickup').value = '';
+  document.getElementById('simpleTotalPrice').textContent = pricePerDay + ' ฿';
+  document.getElementById('simpleBookingModal').classList.add('active');
+}
+
+function openAddonBookingModal(itemName, pricePerDay) {
+  simpleBookingData = { itemName: itemName, itemPrice: pricePerDay };
+  document.getElementById('simpleItemDisplay').textContent = `${itemName} (${pricePerDay}฿/วัน)`;
+  document.getElementById('simpleAlertBox').innerHTML = '';
+  document.getElementById('simplePaymentBox').style.display = 'none';
+  document.getElementById('simpleSubmitBtn').style.display = 'block';
+  document.getElementById('simpleDays').value = 1;
+  document.getElementById('simplePickup').value = '';
+  document.getElementById('simpleTotalPrice').textContent = pricePerDay + ' ฿';
+  document.getElementById('simpleBookingModal').classList.add('active');
+}
+
+function closeSimpleModal() {
+  document.getElementById('simpleBookingModal').classList.remove('active');
+}
+
+function updateSimplePrice() {
+  const days = parseInt(document.getElementById('simpleDays').value) || 1;
+  document.getElementById('simpleTotalPrice').textContent = (simpleBookingData.itemPrice * days) + ' ฿';
+}
+
+async function submitSimpleBooking() {
+  const name = document.getElementById('simpleName').value.trim();
+  const phone = document.getElementById('simplePhone').value.trim();
+  const days = parseInt(document.getElementById('simpleDays').value);
+  const pickup = document.getElementById('simplePickup').value;
+  const alertBox = document.getElementById('simpleAlertBox');
+
+  if (!name || !phone || !days || !pickup) {
+    alertBox.innerHTML = '<div class="alert alert-error">❌ กรุณากรอกข้อมูลให้ครบถ้วน</div>';
+    return;
+  }
+  if (phone.length < 9) {
+    alertBox.innerHTML = '<div class="alert alert-error">❌ เบอร์โทรศัพท์ไม่ถูกต้อง</div>';
+    return;
+  }
+
+  const btn = document.getElementById('simpleSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span>กำลังส่ง...';
+
+  const totalPrice = simpleBookingData.itemPrice * days;
+  const pickupDate = new Date(pickup);
+  const returnDate = new Date(pickupDate);
+  returnDate.setDate(returnDate.getDate() + days);
+
+  const record = {
+    name, phone,
+    camera: simpleBookingData.itemName,
+    main_lens: null,
+    rental_days: days,
+    pickup_datetime: pickup,
+    total_price: totalPrice,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(record)
+    });
+
+    if (response.ok || response.status === 201) {
+      try {
+        await emailjs.send("service_oy28m8o", "template_1kfkj06", {
+          name, phone,
+          camera: simpleBookingData.itemName,
+          main_lens: '-',
+          additional_lenses: '-',
+          addons: '-',
+          days,
+          pickup,
+          total_price: totalPrice + ' ฿'
+        });
+      } catch(e) { console.warn('EmailJS:', e); }
+
+      alertBox.innerHTML = '<div class="alert alert-success">✓ จองสำเร็จ! กรุณาชำระเงินตามข้อมูลด้านล่าง</div>';
+      document.getElementById('simplePaymentBox').style.display = 'block';
+      document.getElementById('simpleSubmitBtn').style.display = 'none';
+    } else {
+      const err = await response.json().catch(() => ({}));
+      alertBox.innerHTML = `<div class="alert alert-error">❌ เกิดข้อผิดพลาด: ${err.message || response.status}</div>`;
+    }
+  } catch(error) {
+    alertBox.innerHTML = `<div class="alert alert-error">❌ ไม่สามารถเชื่อมต่อได้: ${error.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    if (btn.style.display !== 'none') btn.innerHTML = 'ยืนยันการจอง';
+  }
+}
+
+// ===== Init =====
+window.addEventListener('load', () => {
+  checkAllCameraStatus();
+});
+</script>
 
 </body>
 </html>
